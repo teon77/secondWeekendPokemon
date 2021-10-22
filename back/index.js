@@ -3,7 +3,7 @@ const app = express();
 const port = 0808;
 const pRouter = require("./routers/pokeRouter");
 const userRouter = require("./routers/userRouter");
-//const { errorHandler } = require("./src/errorHandler");
+const { errorHandler } = require("./src/errorHandler");
 const { usersHandler } = require("./src/usersHandler");
 
 app.use((req, res, next) => { // chrome only work with this headers !
@@ -15,7 +15,7 @@ app.use((req, res, next) => { // chrome only work with this headers !
  app.use(express.json());
  app.use("/pokemon", usersHandler, pRouter);
  app.use("/user", userRouter);
- //app.use(errorHandler);
+ app.use(errorHandler);
 
 // start the server
 app.listen(port, function() {

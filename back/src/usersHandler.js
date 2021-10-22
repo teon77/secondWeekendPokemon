@@ -9,9 +9,7 @@ module.exports.usersHandler = (req, res, next) => {
 
    const userPath = path.resolve(path.join(__dirname, "/users", username));
    if(!fs.existsSync(userPath)) {
-       fs.mkdir(userPath, { recursive: true }, (err) => {
-        if (err) throw err;
-        });
+      res.send("Please Sign Up")
    }
    req.username = username;
    next();

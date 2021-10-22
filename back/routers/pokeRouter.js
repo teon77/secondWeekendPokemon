@@ -24,8 +24,9 @@ const P = new Pokedex();
         
                       res.send(finalData);          // respond to get request
         } catch(error) {
-            // error with poke Api, define res.send with appropriate error
             console.error(error);
+            throw { status: 404, message: "there isnt such pokemon"}
+           
         }
   });
 
@@ -63,7 +64,7 @@ const P = new Pokedex();
   /* PUT Request Section */
   pRouter.put("/catch/:id", (req, res) => {
     const { id } = req.params;
-    const pokeObject = req.body;
+    const pokeObject = req.body;        // how to get pokeObject
     
     if (Object.entries(pokeObject).length === 0) {
         throw {status: 400, message: "You Must provide pokemon data in (JSON)"};
@@ -92,15 +93,20 @@ const P = new Pokedex();
       }
 
       fs.rmSync(filePath);
-      res.send("Seccess");
+      res.send("Success");
   })
 
-  pRouter.get("/", (req, res) => {
-      const { username } = req.headers;
-      console.log(req.headers)
-      const userPath = path.resolve(path.join("./users", username));
-      console.log(userPath);
-      res.send(userPath);
-  })
+  pRouter.get('/', async  (req, res) => {
+    const pokemonsArray =[];
+    const { username } = req;
+    const files = await fsp.readdir(path.resolve(`users/${username}`));  
+
+    for(let file of files){
+        const fileData = await fsp.readFile(path.resolve(`users/${username}/${file}`));
+        pokemonsArray.push(JSON.parse(fileData.toString()).pokemon);
+    }
+    res.json(pokemonsArray);
+})
+
 
 module.exports = pRouter; // export the router
