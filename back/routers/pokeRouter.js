@@ -28,6 +28,15 @@ const P = new Pokedex();
         next(error);
     }
   });
+  pRouter.get('/', async function (request, response) {
+    const pokemonsArray =[];
+    const files = await fsp.readdir(path.resolve(`users/${username}`));  
+    for(let file of files){
+        const fileData = await fsp.readFile(path.resolve(`users/${username}/${file}`));
+        pokemonsArray.push(JSON.parse(fileData.toString()).pokemon);
+    }
+    response.json(pokemonsArray);
+  })
 
 
   const extractData = async (pokeId) => {        // used to get only the requested ino from pokemon Object
@@ -54,7 +63,7 @@ const P = new Pokedex();
   /* PUT Request Section */
   pRouter.put("/catch/:id", (req, res) => {
     const { id } = req.params;
-    const pokeObject = req.body;        // how to get pokeObject
+    const pokeObject = req.body;        
     
     if (Object.entries(pokeObject).length === 0) {
         throw {status: 400, text: "You Must provide pokemon data in (JSON)"};
@@ -66,9 +75,10 @@ const P = new Pokedex();
     if(fs.existsSync(filePath)) {
         throw {status: 403, text: "You have Already caught this pokemon"}
     }
-
+    else {
     fs.writeFileSync(filePath, JSON.stringify(pokeObject));
     res.send("Success")
+    }
   })
 
 /* DELETE Request Section */
@@ -81,9 +91,10 @@ const P = new Pokedex();
       if(!fs.existsSync(filePath)) {
           throw { status: 403, text: "Oops, You dont have this pokemon"};
       }
-
+      else {
       fs.rmSync(filePath);
       res.send("Success");
+      }
   })
 
   pRouter.get('/', async  (req, res) => {

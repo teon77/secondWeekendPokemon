@@ -18,6 +18,7 @@ const { usersHandler } = require("./src/usersHandler");
  app.use("/user", userRouter);
  app.use(errorHandler);
 
+
 // start the server
 app.listen(port, function() {
   console.log('app started');
