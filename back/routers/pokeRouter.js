@@ -28,14 +28,18 @@ const P = new Pokedex();
         next(error);
     }
   });
-  pRouter.get('/', async function (request, response) {
-    const pokemonsArray =[];
+  pRouter.get('/', async function (req, res, next) {
+      try {
+    const pokemonsArray = [];
     const files = await fsp.readdir(path.resolve(`users/${username}`));  
     for(let file of files){
         const fileData = await fsp.readFile(path.resolve(`users/${username}/${file}`));
         pokemonsArray.push(JSON.parse(fileData.toString()).pokemon);
     }
-    response.json(pokemonsArray);
+    res.json(pokemonsArray);
+    } catch(error) {
+        next(error);
+    }  
   })
 
 
@@ -96,18 +100,6 @@ const P = new Pokedex();
       res.send("Success");
       }
   })
-
-  pRouter.get('/', async  (req, res) => {
-    const pokemonsArray =[];
-    const { username } = req;
-    const files = await fsp.readdir(path.resolve(`users/${username}`));  
-
-    for(let file of files){
-        const fileData = await fsp.readFile(path.resolve(`users/${username}/${file}`));
-        pokemonsArray.push(JSON.parse(fileData.toString()).pokemon);
-    }
-    res.json(pokemonsArray);
-})
 
 
 module.exports = pRouter; // export the router
